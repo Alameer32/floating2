@@ -24,12 +24,12 @@
     height: 600px;
     border-radius: 16px;
     overflow: hidden;
-    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    transition: all 0.3s ease;
+    background: white;
     display: flex;
     flex-direction: column;
     z-index: 9999;
-    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
   }
 
   /* Minimized State */
@@ -38,86 +38,7 @@
     height: 64px;
     border-radius: 32px;
     cursor: pointer;
-    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
-    animation: pulse 2s ease-in-out infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-  }
-
-  #chat-container.minimized:hover {
-    transform: scale(1.1);
-    box-shadow: 0 12px 32px rgba(102, 126, 234, 0.5);
-  }
-
-  /* Header */
-  #chat-header {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(10px);
-    padding: 16px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    cursor: move;
-  }
-
-  #chat-container.minimized #chat-header {
-    display: none;
-  }
-
-  #chat-title {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    color: white;
-    font-weight: 600;
-    font-size: 16px;
-  }
-
-  .status-dot {
-    width: 8px;
-    height: 8px;
-    background: #4ade80;
-    border-radius: 50%;
-    animation: blink 2s ease-in-out infinite;
-  }
-
-  @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
-  }
-
-  /* Control Buttons */
-  #chat-controls {
-    display: flex;
-    gap: 8px;
-  }
-
-  .control-btn {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.2);
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-  }
-
-  .control-btn:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: translateY(-2px);
-  }
-
-  .control-btn svg {
-    width: 18px;
-    height: 18px;
-    fill: white;
+    background: linear-gradient(135deg, #FFB6D9 0%, #D4B5E8 100%);
   }
 
   /* Iframe Container */
@@ -155,7 +76,7 @@
     width: 40px;
     height: 40px;
     border: 4px solid #f3f3f3;
-    border-top: 4px solid #667eea;
+    border-top: 4px solid #D4B5E8;
     border-radius: 50%;
     animation: spin 1s linear infinite;
   }
@@ -174,15 +95,10 @@
     left: 50%;
     transform: translate(-50%, -50%);
     fill: white;
-    transition: transform 0.3s ease;
   }
 
   #chat-container:not(.minimized) #chat-icon {
     display: none;
-  }
-
-  #chat-container.minimized:hover #chat-icon {
-    transform: translate(-50%, -50%) scale(1.1);
   }
 
   /* Notification Badge */
@@ -197,11 +113,42 @@
     font-size: 11px;
     font-weight: 700;
     display: none;
-    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
   }
 
   #chat-container.minimized #notification-badge.active {
     display: block;
+  }
+
+  /* Minimize Button */
+  #minimize-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.05);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease;
+    z-index: 10000;
+  }
+
+  #minimize-btn:hover {
+    background: rgba(0, 0, 0, 0.1);
+  }
+
+  #minimize-btn svg {
+    width: 18px;
+    height: 18px;
+    fill: #666;
+  }
+
+  #chat-container.minimized #minimize-btn {
+    display: none;
   }
 
   /* Mobile Responsive */
@@ -222,32 +169,6 @@
       border-radius: 28px;
     }
   }
-
-  /* Sound Wave Animation (when active) */
-  .sound-wave {
-    display: none;
-    gap: 2px;
-  }
-
-  .sound-wave.active {
-    display: flex;
-  }
-
-  .sound-bar {
-    width: 3px;
-    height: 12px;
-    background: #4ade80;
-    border-radius: 2px;
-    animation: wave 1s ease-in-out infinite;
-  }
-
-  .sound-bar:nth-child(2) { animation-delay: 0.2s; }
-  .sound-bar:nth-child(3) { animation-delay: 0.4s; }
-
-  @keyframes wave {
-    0%, 100% { transform: scaleY(0.5); }
-    50% { transform: scaleY(1); }
-  }
 </style>
 </head>
 <body>
@@ -255,25 +176,12 @@
   <!-- Notification Badge -->
   <div id="notification-badge">1</div>
 
-  <!-- Chat Header (visible when expanded) -->
-  <div id="chat-header">
-    <div id="chat-title">
-      <div class="status-dot"></div>
-      <span>Chat Assistant</span>
-      <div class="sound-wave">
-        <div class="sound-bar"></div>
-        <div class="sound-bar"></div>
-        <div class="sound-bar"></div>
-      </div>
-    </div>
-    <div id="chat-controls">
-      <button class="control-btn" id="minimize-btn" title="Minimize">
-        <svg viewBox="0 0 24 24">
-          <path d="M19 13H5v-2h14v2z"/>
-        </svg>
-      </button>
-    </div>
-  </div>
+  <!-- Minimize Button -->
+  <button id="minimize-btn" title="Minimize">
+    <svg viewBox="0 0 24 24">
+      <path d="M19 13H5v-2h14v2z"/>
+    </svg>
+  </button>
 
   <!-- Iframe Wrapper -->
   <div id="iframe-wrapper">
@@ -302,18 +210,12 @@
   const iframe = document.getElementById('chat-iframe');
   const loadingIndicator = document.getElementById('loading-indicator');
   const notificationBadge = document.getElementById('notification-badge');
-  const soundWave = document.querySelector('.sound-wave');
 
   // Toggle chat widget
   function toggleChat() {
-    if (container.classList.contains('minimized')) {
-      container.classList.remove('minimized');
+    container.classList.toggle('minimized');
+    if (!container.classList.contains('minimized')) {
       notificationBadge.classList.remove('active');
-      // Store state
-      localStorage.setItem('chatWidgetState', 'expanded');
-    } else {
-      container.classList.add('minimized');
-      localStorage.setItem('chatWidgetState', 'minimized');
     }
   }
 
@@ -331,23 +233,10 @@
     toggleChat();
   });
 
-  // Prevent clicks inside expanded chat from closing it
-  container.addEventListener('click', (e) => {
-    if (!container.classList.contains('minimized')) {
-      e.stopPropagation();
-    }
-  });
-
   // Hide loading indicator when iframe loads
   iframe.addEventListener('load', () => {
     loadingIndicator.classList.remove('active');
   });
-
-  // Restore previous state
-  const savedState = localStorage.getItem('chatWidgetState');
-  if (savedState === 'expanded') {
-    container.classList.remove('minimized');
-  }
 
   // Simulate notification (remove this in production)
   setTimeout(() => {
@@ -355,42 +244,6 @@
       notificationBadge.classList.add('active');
     }
   }, 3000);
-
-  // Optional: Draggable functionality
-  let isDragging = false;
-  let currentX, currentY, initialX, initialY;
-
-  const header = document.getElementById('chat-header');
-
-  header.addEventListener('mousedown', (e) => {
-    if (e.target.closest('.control-btn')) return;
-    isDragging = true;
-    initialX = e.clientX - container.offsetLeft;
-    initialY = e.clientY - container.offsetTop;
-  });
-
-  document.addEventListener('mousemove', (e) => {
-    if (!isDragging) return;
-    e.preventDefault();
-    
-    currentX = e.clientX - initialX;
-    currentY = e.clientY - initialY;
-
-    container.style.left = currentX + 'px';
-    container.style.top = currentY + 'px';
-    container.style.right = 'auto';
-    container.style.bottom = 'auto';
-  });
-
-  document.addEventListener('mouseup', () => {
-    isDragging = false;
-  });
-
-  // Listen for microphone usage (mock - adapt to your needs)
-  // This would typically come from the iframe communication
-  document.addEventListener('microphoneActive', (e) => {
-    soundWave.classList.toggle('active', e.detail.active);
-  });
 </script>
 </body>
 </html>
